@@ -1,0 +1,150 @@
+<header class="topbar">
+  <div class="brand">
+    <img src="panda.svg" alt="" width="34" height="34" />
+    <span>Red Panda Poker</span>
+  </div>
+  <div class="room-info">
+    <span class="dot" [class]="poker.status()" [title]="poker.status() === 'online' ? 'Verbunden' : 'Verbindung wird hergestellt …'"></span>
+    <span class="room-name">Raum <strong>{{ poker.room() }}</strong></span>
+    <button class="btn ghost small" type="button" (click)="copyLink()">
+      {{ copied() ? 'Kopiert ✓' : 'Link kopieren' }}
+    </button>
+    <button class="btn ghost small" type="button" (click)="poker.leave()" title="Name ändern oder Raum verlassen">
+      Verlassen
+    </button>
+  </div>
+</header>
+
+@if (poker.status() === 'error') {
+  <p class="banner">Verbindung unterbrochen – es wird automatisch neu verbunden …</p>
+}
+
+<main>
+  <label class="topic">
+    <span class="sr-only">Was schätzen wir?</span>
+    <input
+      #topic
+      [value]="poker.round().topic"
+      (input)="onTopicInput(topic.value)"
+      (change)="onTopicCommit(topic.value)"
+      (keydown.enter)="topic.blur()"
+      maxlength="120"
+      placeholder="Was schätzen wir? (z. B. ABC-123 Login-Seite)"
+    />
+  </label>
+
+  <section class="table" [class.revealed]="poker.round().revealed">
+    <ul class="players">
+      @for (p of poker.participants(); track p.id) {
+        <li class="player" [class.me]="p.isMe" [class.spectator]="p.spectator">
+          @if (p.spectator) {
+            <div class="slot watch" title="schaut zu">👀</div>
+          } @else {
+            <div
+              class="slot"
+              [class.voted]="p.voted"
+              [class.flipped]="poker.round().revealed && p.vote !== null"
+              [class.min]="extreme(p.vote) === 'min'"
+              [class.max]="extreme(p.vote) === 'max'"
+            >
+              <div class="flip">
+                <div class="face back"></div>
+                <div class="face front">{{ p.vote }}</div>
+              </div>
+              @if (!p.voted) {
+                <span class="empty">{{ poker.round().revealed ? '–' : '…' }}</span>
+              }
+            </div>
+          }
+          <span class="pname">{{ p.name }}@if (p.isMe) {&nbsp;<em>(du)</em>}</span>
+        </li>
+      }
+    </ul>
+
+    <div class="center">
+      <app-panda [mood]="mood()" />
+      <p class="status">{{ statusText() }}</p>
+      @if (poker.round().revealed) {
+        <button class="btn primary" type="button" (click)="poker.newRound()">Neue Runde</button>
+      } @else {
+        <button class="btn primary" type="button" (click)="poker.reveal()" [disabled]="poker.votedCount() === 0">
+          Karten aufdecken
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (poker.round().revealed && poker.result().count > 0) {
+    <section class="results" aria-live="polite">
+      <div class="stat">
+        <span class="label">Durchschnitt</span>
+        <span class="value">{{ formatAvg(poker.result().avg) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">Spanne</span>
+        <span class="value">
+          @if (poker.result().min !== null) {
+            {{ formatAvg(poker.result().min) }} – {{ formatAvg(poker.result().max) }}
+          } @else {
+            –
+          }
+        </span>
+      </div>
+      <ul class="distribution">
+        @for (d of poker.result().distribution; track d[0]) {
+          <li>
+            <span class="card-mini">{{ d[0] }}</span>
+            <span class="bar"><span [style.width.%]="barWidth(d[1])"></span></span>
+            <span class="count">{{ d[1] }}×</span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</main>
+
+<footer class="hand">
+  @if (poker.spectator()) {
+    <p class="hint">
+      Du schaust zu.
+      <button class="link" type="button" (click)="toggleSpectator()">Mitschätzen</button>
+    </p>
+  } @else {
+    <div class="cards" role="group" aria-label="Deine Karte">
+      @for (c of deck; track c) {
+        <button
+          type="button"
+          class="pcard"
+          [class.selected]="poker.myVote() === c"
+          [disabled]="poker.round().revealed"
+          [attr.aria-pressed]="poker.myVote() === c"
+          (click)="poker.vote(c)"
+        >
+          {{ c }}
+        </button>
+      }
+    </div>
+    <p class="hint">
+      @if (poker.round().revealed) {
+        Warte auf die nächste Runde.
+      } @else {
+        Karte antippen zum Wählen, nochmal antippen zum Zurücknehmen.
+      }
+      <button class="link" type="button" (click)="toggleSpectator()">Nur zuschauen</button>
+    </p>
+  }
+</footer>
+
+@if (poker.round().revealed && poker.result().consensus) {
+  <div class="leaves" aria-hidden="true">
+    @for (l of leaves; track $index) {
+      <span
+        [style.left.%]="l.left"
+        [style.animation-delay.s]="l.delay"
+        [style.animation-duration.s]="l.duration"
+        [style.width.px]="l.size"
+        [style.height.px]="l.size"
+      ></span>
+    }
+  </div>
+}

@@ -1,0 +1,171 @@
+/* Rote-Panda-Farbwelt */
+:root {
+  --rust: #9e3a17;
+  --orange: #d9622b;
+  --honey: #f2a541;
+  --cream: #fff4e6;
+  --cream-dark: #f5e3cc;
+  --brown: #3b2416;
+  --bamboo: #6a9a3a;
+  --felt: #5a2a16;
+  --felt-edge: #7a3a1d;
+
+  --bg: #fbecd9;
+  --surface: #fffaf3;
+  --text: var(--brown);
+  --text-muted: #7d5a45;
+  --line: #e2c3a3;
+
+  /* Kartenrückseite: geringelter Panda-Schwanz */
+  --card-back: repeating-linear-gradient(
+    -35deg,
+    var(--orange) 0 9px,
+    var(--rust) 9px 18px,
+    #c75526 18px 21px,
+    var(--rust) 21px 26px
+  );
+
+  --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --radius-lg: 20px;
+  --shadow: 0 10px 30px rgb(91 42 22 / 0.15);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 0%, #ffe1c2 0, transparent 40%),
+    radial-gradient(circle at 90% 100%, #f8d5b4 0, transparent 40%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--rust);
+}
+
+input:not([type='checkbox']) {
+  font: inherit;
+  color: inherit;
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  &:focus {
+    border-color: var(--orange);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  input {
+    width: 100%;
+    font-weight: 400;
+  }
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--rust);
+  }
+}
+
+.btn {
+  font: inherit;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 26px;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    filter 0.15s,
+    opacity 0.15s;
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  &.primary {
+    background: var(--honey);
+    color: var(--brown);
+    box-shadow: 0 4px 0 #c47f20;
+    &:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
+  }
+
+  &.ghost {
+    background: rgb(255 255 255 / 0.15);
+    color: inherit;
+    &:hover {
+      background: rgb(255 255 255 / 0.25);
+    }
+  }
+
+  &.small {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+  }
+}
+
+.link {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--rust);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 3px solid var(--honey);
+  outline-offset: 2px;
+}

@@ -1,0 +1,420 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ---------- Kopfzeile ---------- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 20px;
+  background: var(--rust);
+  color: var(--cream);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--honey);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.3);
+  &.online {
+    background: var(--bamboo);
+  }
+  &.error {
+    background: #ff4d4d;
+  }
+}
+
+.banner {
+  margin: 0;
+  padding: 8px 16px;
+  text-align: center;
+  background: var(--honey);
+  color: var(--brown);
+}
+
+/* ---------- Hauptbereich ---------- */
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topic input {
+  width: 100%;
+  font-size: 1.1rem;
+  text-align: center;
+  background: transparent;
+  border: 2px dashed var(--line);
+  &:focus {
+    border-style: solid;
+    background: var(--surface);
+  }
+}
+
+/* Der Tisch: Spieler rundherum, Panda in der Mitte */
+.table {
+  display: grid;
+  gap: 24px;
+  padding: 28px 20px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 50% 40%, rgb(255 255 255 / 0.08), transparent 60%),
+    var(--felt);
+  box-shadow: inset 0 0 0 6px var(--felt-edge), var(--shadow);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  order: -1;
+  color: var(--cream);
+  text-align: center;
+}
+
+.status {
+  margin: 0;
+  font-weight: 600;
+  min-height: 1.4em;
+}
+
+.players {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 14px;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 78px;
+}
+
+.pname {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cream);
+  font-size: 0.9rem;
+  font-weight: 600;
+  em {
+    font-weight: 400;
+    opacity: 0.7;
+  }
+}
+
+.slot {
+  position: relative;
+  width: 54px;
+  height: 76px;
+  border-radius: 10px;
+  border: 2px dashed rgb(255 244 230 / 0.35);
+  perspective: 600px;
+
+  &.watch {
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    border-style: dotted;
+  }
+
+  .empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgb(255 244 230 / 0.6);
+    font-size: 1.4rem;
+  }
+
+  .flip {
+    position: absolute;
+    inset: -2px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.3, 1.4, 0.5, 1), opacity 0.2s;
+    opacity: 0;
+    transform: translateY(-14px) scale(0.9);
+  }
+
+  &.voted .flip {
+    opacity: 1;
+    transform: none;
+  }
+
+  &.flipped .flip {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    backface-visibility: hidden;
+  }
+
+  .back {
+    background: var(--card-back);
+    border: 3px solid var(--cream);
+  }
+
+  .front {
+    display: grid;
+    place-items: center;
+    transform: rotateY(180deg);
+    background: var(--cream);
+    color: var(--brown);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    border: 3px solid var(--orange);
+  }
+
+  &.min .front {
+    border-color: var(--bamboo);
+    box-shadow: 0 0 0 3px var(--bamboo);
+  }
+  &.max .front {
+    border-color: var(--honey);
+    box-shadow: 0 0 0 3px var(--honey);
+  }
+}
+
+.me .slot:not(.watch) {
+  border-color: var(--honey);
+}
+
+@media (min-width: 720px) {
+  .table {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Ergebnis ---------- */
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  animation: rise 0.4s ease-out;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--rust);
+  }
+}
+
+.distribution {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    display: grid;
+    grid-template-columns: 40px 1fr 32px;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.card-mini {
+  display: grid;
+  place-items: center;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--cream-dark);
+  font-weight: 700;
+}
+
+.bar {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--cream-dark);
+  overflow: hidden;
+  span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange), var(--rust));
+    border-radius: 6px;
+    transition: width 0.5s ease-out;
+  }
+}
+
+.count {
+  text-align: right;
+  color: var(--text-muted);
+}
+
+/* ---------- Kartenhand ---------- */
+.hand {
+  position: sticky;
+  bottom: 0;
+  padding: 14px 16px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 75%, transparent);
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 14px 4px 6px;
+  scrollbar-width: thin;
+}
+
+.pcard {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 74px;
+  border-radius: 10px;
+  border: 2px solid var(--orange);
+  background: var(--surface);
+  color: var(--brown);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--orange);
+  transition:
+    transform 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-6px);
+  }
+
+  &.selected {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--cream);
+    transform: translateY(-12px);
+    box-shadow: 0 6px 12px rgb(158 58 23 / 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.hint {
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Bambusblätter bei Einigkeit ---------- */
+.leaves {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+
+  span {
+    position: absolute;
+    top: -40px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21C3 11 9 4 21 3c-1 12-8 18-18 18z' fill='%236a9a3a'/%3E%3Cpath d='M4 20L15 9' stroke='%23c9e29b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    animation: fall linear forwards;
+  }
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(540deg);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 10px 16px;
+  }
+  .room-name {
+    display: none;
+  }
+  .player {
+    width: 64px;
+  }
+  .slot {
+    width: 46px;
+    height: 66px;
+  }
+  .pcard {
+    width: 44px;
+    height: 64px;
+    font-size: 1.15rem;
+  }
+  .cards {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
